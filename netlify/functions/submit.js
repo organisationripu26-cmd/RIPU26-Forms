@@ -1,12 +1,11 @@
 'use strict';
 /** POST /api/submit — point d'entrée unique des 3 formulaires.
- *  Requis : SUPABASE_URL, SUPABASE_SERVICE_KEY (secrète, jamais dans le HTML).
- *  Optionnels : ALLOWED_ORIGIN (liste séparée par des virgules), RESEND_API_KEY, ORG_NOTIFY_EMAIL, MAIL_FROM. */
+ *  Requis : GS_URL_FORM1, GS_URL_FORM2, GS_URL_FORM3. */
 const { validate } = require('./lib/validate');
-const { notify } = require('./lib/notify');
 const { getDbConfig } = require('./lib/db');
+const { notify } = require('./lib/notify');
 
-const hits = new Map();                                    // limiteur best-effort (par instance)
+const hits = new Map();
 function limited(ip) {
   const now = Date.now(), a = (hits.get(ip) || []).filter(t => now - t < 60000); a.push(now); hits.set(ip, a);
   if (hits.size > 5000) hits.clear();
@@ -33,7 +32,7 @@ exports.handler = async (event) => {
 
   let b; try { b = JSON.parse(event.body || ''); } catch { return reply(400, { ok: false, error: 'JSON invalide.' }); }
   if (!b || typeof b !== 'object') return reply(400, { ok: false, error: 'Requête invalide.' });
-  if (b.hp) return reply(200, { ok: true });               // piège à robots : on feint le succès sans rien écrire
+  if (b.hp) return reply(200, { ok: true });
 
   const form = Number(b.form);
   if (![1, 2, 3].includes(form) || typeof b.key !== 'string' || !UUID.test(b.key)) return reply(400, { ok: false, error: 'Requête incomplète.' });
@@ -41,19 +40,37 @@ exports.handler = async (event) => {
   const v = validate(form, b.data);
   if (!v.ok) return reply(400, { ok: false, errors: v.errors });
 
-  const { url, key: sk } = getDbConfig(form);
-  if (!url || !sk) { console.error('Configuration serveur manquante'); return reply(500, { ok: false, error: 'Service momentanément indisponible.' }); }
+  const { url } = getDbConfig(form);
+  if (!url) { console.error('Configuration serveur manquante pour le form', form); return reply(500, { ok: false, error: 'Service momentanément indisponible.' }); }
+  
   try {
-    const r = await fetch(`${url.replace(/\/$/, '')}/rest/v1/rpc/submit_form`, {
-      method: 'POST', headers: { 'content-type': 'application/json', apikey: sk, authorization: `Bearer ${sk}` },
-      body: JSON.stringify({ p_form: form, p_key: b.key, p_data: v.data }),
-    });
+    const payload = {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ key: b.key, data: v.data })
+    };
+    const r = await fetch(url, payload);
     if (!r.ok) { console.error('submit_form HTTP', r.status); return reply(502, { ok: false, error: "L'enregistrement a échoué. Réessayez dans un instant." }); }
-    const res = await r.json();
+    
+    // Web App Google Apps Script renvoie souvent du texte ou une redirection HTML si mal configuré, ou du JSON si bien configuré.
+    const resText = await r.text();
+    let res;
+    try {
+      res = JSON.parse(resText);
+    } catch(e) {
+      console.error('Erreur parsing réponse GAS:', resText);
+      return reply(502, { ok: false, error: "L'enregistrement a échoué. Réponse serveur invalide." });
+    }
+
+    if (!res.ok) {
+      console.error('Erreur retournée par GAS:', res.error);
+      return reply(502, { ok: false, error: "L'enregistrement a échoué." });
+    }
+
     if (!res.duplicate) { try { await notify(form, v.data, res); } catch (e) { console.error('notify:', e.message); } }
     return reply(200, { ok: true, total: res.total, updated: !!res.updated });
   } catch (e) {
-    console.error('submit:', e.message);                  // jamais de données personnelles dans les logs
+    console.error('submit:', e.message);
     return reply(502, { ok: false, error: "L'enregistrement a échoué. Réessayez dans un instant." });
   }
 };
