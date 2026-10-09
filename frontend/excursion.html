@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RIPU26 · Excursion El Jem × Médina de Sousse</title>
+<meta name="description" content="RIPU26 — inscrivez-vous à l'excursion entre l'amphithéâtre d'El Jem et la Médina de Sousse, avec vos accompagnants.">
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* EXCURSION — patrimoine, pierre dorée, lumière rasante.
+   Photos : assets/img/eljem.jpg (fournie, photographie réelle)
+            assets/img/medina.jpg (À DÉPOSER : photographie réelle d'une ruelle de la Médina de Sousse, ≥ 2000 px de large)
+   La « porte » en arc ouvre sur la Médina ; sans medina.jpg elle cadre une arcade d'El Jem. */
+:root{--ink:#1D0F38;--v:#3A1F5C;--vv:#5B14D6;--lil:#E2AAEF;--gold:#F6C945;--ochre:#B8803F;--stone:#F6EEDF;--stone2:#EADDC2;--line:#DCCBA9;--mut:#6B5A45;--err:#B3203F;--page:#F6EEDF}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:400 16px/1.55 Poppins,system-ui,sans-serif;color:var(--ink);background:var(--page);padding-bottom:env(safe-area-inset-bottom);overflow-x:hidden}
+
+/* ---------- scène : El Jem + porte vers la Médina ---------- */
+.stage{position:relative;height:clamp(560px,92svh,880px);overflow:hidden;isolation:isolate;background:#d9b987}
+.layer{position:absolute;inset:-4% 0;will-change:transform}
+.eljem{background:url(assets/img/eljem.jpg) 62% 46%/cover no-repeat;filter:saturate(1.04) contrast(1.04) sepia(.14)}
+/* même grain de lumière sur les deux lieux : lueur dorée rasante + voile violet RIPU en haut */
+.grade{position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:
+   radial-gradient(120% 70% at 85% 8%,rgba(255,226,160,.38),rgba(255,226,160,0) 60%),
+   linear-gradient(180deg,rgba(29,15,56,.52) 0%,rgba(58,31,92,.14) 34%,rgba(246,238,223,0) 58%,rgba(246,238,223,.82) 90%,var(--page) 100%)}
+.gate{position:absolute;z-index:2;right:max(4vw,calc(50% - 540px));bottom:9%;width:min(34vw,330px);aspect-ratio:3/4.3;
+  border-radius:999px 999px 6px 6px;overflow:hidden;
+  box-shadow:0 0 0 7px #d9bd8c,0 0 0 9px rgba(120,80,30,.5),0 40px 70px -18px rgba(29,15,56,.65),inset 0 0 60px rgba(60,35,10,.5)}
+.gate .in{position:absolute;inset:-6% -4%;background:url(assets/img/medina.jpg) center/cover no-repeat;filter:saturate(1.05) contrast(1.05) sepia(.18);will-change:transform}
+.gate.no-medina .in{background:url(assets/img/eljem.jpg) 74% 40%/260% auto no-repeat}
+.gate::after{content:"";position:absolute;inset:0;background:radial-gradient(90% 70% at 50% 100%,rgba(255,226,160,.28),rgba(255,226,160,0) 60%),linear-gradient(180deg,rgba(29,15,56,.22),rgba(29,15,56,0) 40%);pointer-events:none}
+.hero{position:absolute;z-index:4;left:0;right:0;bottom:clamp(40px,9svh,96px);max-width:1040px;margin:0 auto;padding:0 18px;color:#fff;text-shadow:0 2px 26px rgba(29,15,56,.55)}
+.brand{position:absolute;z-index:4;top:max(22px,env(safe-area-inset-top));left:0;right:0;max-width:1040px;margin:0 auto;padding:0 18px;display:flex;gap:12px;align-items:center;color:#fff;text-shadow:0 1px 14px rgba(29,15,56,.5)}
+.brand svg{width:38px;flex:none}.brand b{font:700 20px Fraunces,serif;letter-spacing:.04em}.brand span{font-size:13px}
+.eyebrow{font:600 12px Poppins;letter-spacing:.2em;text-transform:uppercase;margin:0 0 12px}
+h1{font:700 clamp(38px,8.4vw,84px)/.98 Fraunces,serif;margin:0 0 14px;letter-spacing:-.015em;max-width:11em}
+h1 em{font-style:italic;font-weight:500;color:var(--gold)}
+.lead{font-size:clamp(15px,2.3vw,19px);max-width:30em;margin:0}
+
+/* ---------- ruban d'histoire ---------- */
+.story{max-width:1040px;margin:-6px auto 0;padding:0 18px;display:grid;grid-template-columns:1fr 1fr;gap:14px;position:relative;z-index:5}
+.chap{background:rgba(255,251,242,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.chap small{font:600 11px Poppins;letter-spacing:.18em;text-transform:uppercase;color:var(--ochre)}
+.chap h3{font:500 22px/1.2 Fraunces,serif;margin:4px 0 6px}
+.chap p{margin:0;font-size:14px;color:var(--mut)}
+.facts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.facts span{font:500 13px Poppins;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,251,242,.85)}
+.facts b{color:var(--v)}
+
+/* ---------- formulaire ---------- */
+main{max-width:660px;margin:34px auto 0;padding:0 18px 70px}
+.card{background:#FFFBF2;border:1px solid var(--line);border-radius:170px 170px 22px 22px/84px 84px 22px 22px;padding:60px clamp(20px,5vw,40px) 30px;box-shadow:0 34px 70px -28px rgba(80,50,15,.45)}
+.card.is-done{padding-top:44px}
+h2{font:500 clamp(23px,3.6vw,30px)/1.2 Fraunces,serif;margin:0 0 6px;outline:none}
+.hint{color:var(--mut);font-size:14px;margin:0 0 20px}
+.f{margin:0 0 18px}.f[hidden]{display:none}.f .hint{margin:6px 0 0;font-size:13px}
+label.q,legend{display:block;font-weight:500;margin:0 0 7px;padding:0;font-size:15px}
+fieldset{border:0;padding:0;margin:0}
+input[type=text],input[type=email],input[type=tel],select,textarea{width:100%;min-height:50px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font:inherit;transition:border-color .2s,box-shadow .2s}
+textarea{min-height:96px;resize:vertical}
+input:hover,select:hover,textarea:hover{border-color:#C9B07F}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--vv);box-shadow:0 0 0 4px rgba(91,20,214,.15)}
+button:focus-visible,.o:focus-within,a:focus-visible{outline:3px solid var(--vv);outline-offset:2px}
+.o{display:flex;gap:12px;align-items:center;min-height:52px;padding:10px 14px;margin-bottom:8px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;transition:.2s;background:#fff}
+.o:hover{border-color:#C9B07F}
+.o:has(input:checked){background:#F4ECFF;border-color:var(--vv);box-shadow:0 0 0 3px rgba(91,20,214,.08)}
+.o input{accent-color:var(--vv);width:20px;height:20px;flex:none}
+.err{color:var(--err);font-size:13px;margin-top:6px}.err:empty{display:none}
+.bad input,.bad select,.bad textarea{border-color:var(--err)}
+.nav{display:flex;gap:10px;margin-top:26px}
+button{font:600 16px Poppins;min-height:52px;border-radius:999px;border:0;padding:0 28px;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
+.pri{flex:1;background:var(--v);color:#fff}
+.pri:hover{background:var(--vv);transform:translateY(-1px);box-shadow:0 10px 24px -8px rgba(91,20,214,.55)}
+.pri:disabled{opacity:.6;cursor:wait;transform:none}
+.sec{background:transparent;color:var(--v);border:1.5px solid var(--line)}.sec:hover{border-color:var(--v)}
+.dots{display:flex;gap:7px;margin:0 0 20px;justify-content:center}
+.dots i{height:5px;flex:1;max-width:56px;border-radius:99px;background:var(--stone2);transition:background .4s}
+.dots i.on{background:linear-gradient(90deg,var(--ochre),var(--gold))}
+.step{animation:in .45s cubic-bezier(.2,.7,.2,1)}.step.back{animation-name:inb}
+@keyframes in{from{opacity:0;transform:translateX(22px)}}@keyframes inb{from{opacity:0;transform:translateX(-22px)}}
+.warn{background:#FCE9ED;color:#7D1730;padding:12px 14px;border-radius:12px;margin-bottom:14px;font-size:14px}
+.hp{position:absolute;left:-9999px}
+
+/* compteur : LE chiffre que l'organisation attend */
+.count{display:flex;align-items:center;gap:14px;margin:4px 0 20px;padding:14px 16px;border-radius:16px;background:linear-gradient(135deg,var(--v),var(--ink));color:#fff}
+.count[hidden]{display:none}
+.count output{font:700 40px/1 Fraunces,serif;min-width:1.1em;text-align:center;color:var(--gold);transition:transform .25s}
+.count output.bump{transform:scale(1.25)}
+.count div{font-size:13px;line-height:1.35}.count b{display:block;font-size:15px}
+
+/* ---------- confirmation ---------- */
+.ok{text-align:center}
+.ok .seal{width:96px;height:96px;margin:0 auto 14px;display:block}
+.ok .seal .arc{fill:none;stroke:var(--ochre);stroke-width:3}
+.ok .seal path.t{fill:none;stroke:var(--ochre);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60;animation:dr .9s .25s forwards}
+@keyframes dr{to{stroke-dashoffset:0}}
+.ok .hint{font-size:15px}
+.big{display:inline-flex;flex-direction:column;align-items:center;margin:8px 0 18px;padding:16px 34px;border-radius:20px;background:linear-gradient(135deg,var(--v),var(--ink));color:#fff}
+.big strong{font:700 56px/1 Fraunces,serif;color:var(--gold)}.big span{font-size:13px;letter-spacing:.06em}
+.ok a{display:block;margin-top:10px;padding:15px;border-radius:999px;text-decoration:none;font-weight:600;background:var(--v);color:#fff}
+.ok a.s{background:none;color:var(--v);border:1.5px solid var(--line)}
+.foot{max-width:660px;margin:0 auto;padding:0 18px 40px;text-align:center;font-size:13px;color:var(--mut)}.foot a{color:var(--v)}
+
+@media(max-width:700px){
+  .stage{height:clamp(600px,96svh,820px)}
+  .gate{width:44vw;right:5vw;bottom:36%}
+  .hero{bottom:clamp(28px,5svh,48px)}
+  h1{max-width:8em}
+  .story{grid-template-columns:1fr;margin-top:-4px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.ok .seal path.t{stroke-dashoffset:0}.layer,.gate .in{transform:none!important}}
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+  <div class="layer eljem" data-speed=".10" aria-hidden="true"></div>
+  <div class="gate" id="gate" aria-hidden="true"><div class="in" data-speed="-.06"></div></div>
+  <div class="grade" aria-hidden="true"></div>
+  <div class="brand">
+    <svg viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M32 56V34M32 34L18 22M32 34l14-12M18 22V10M46 22V12M18 22h-8M46 22h8"/><g fill="#F6C945" stroke="none"><circle cx="32" cy="56" r="4"/><circle cx="18" cy="10" r="4"/><circle cx="46" cy="12" r="4"/><circle cx="10" cy="22" r="3"/><circle cx="54" cy="22" r="3"/></g></svg>
+    <div><b>RIPU26</b><br><span>30 &amp; 31 octobre 2026 · Sousse, Tunisie</span></div>
+  </div>
+  <header class="hero">
+    <p class="eyebrow">Excursion patrimoine</p>
+    <h1>El Jem <em>×</em> Médina de&nbsp;Sousse</h1>
+    <p class="lead">De l'amphithéâtre romain aux ruelles blanches de la Médina : une même histoire, deux lieux à parcourir ensemble.</p>
+  </header>
+</div>
+
+<section class="story" aria-label="Au programme de l'excursion">
+  <article class="chap"><small>Premier chapitre</small><h3>L'amphithéâtre d'El Jem</h3><p>L'un des amphithéâtres romains les mieux conservés au monde, classé à l'UNESCO : arcades monumentales, gradins et galeries à explorer.</p></article>
+  <article class="chap"><small>Second chapitre</small><h3>La Médina de Sousse</h3><p>Murs blancs, portes anciennes, passages voûtés : la Médina, classée à l'UNESCO, se découvre à pied, de ruelle en ruelle.</p></article>
+  <div class="facts" id="facts"></div>
+</section>
+
+<main>
+  <section class="card" id="card" aria-live="polite" aria-label="Formulaire d'inscription à l'excursion"></section>
+  <noscript><p class="warn">Ce formulaire nécessite JavaScript. Écrivez-nous à ripusousse@gmail.com.</p></noscript>
+</main>
+<p class="foot">Une question ? <a href="mailto:ripusousse@gmail.com">ripusousse@gmail.com</a> · +216 55 595 234<br>Vos informations sont utilisées uniquement par le comité d'organisation de RIPU26 pour organiser l'excursion.</p>
+
+<script src="js/engine.js"></script>
+<script>
+(function(){
+  var el=RIPU.el;
+
+  /* ===== À COMPLÉTER PAR L'ORGANISATION (laisser "" tant que ce n'est pas confirmé) =====
+     Ces valeurs s'affichent sous le titre ; rien n'est inventé si elles sont vides. */
+  var EXC={date:"",depart:"",tarif:"",places:""};
+  var facts=document.getElementById("facts");
+  [["Date",EXC.date],["Départ",EXC.depart],["Tarif",EXC.tarif],["Places",EXC.places]].forEach(function(x){
+    if(x[1]){var s=el("span");s.append(x[0]+" : ");s.append(Object.assign(el("b"),{textContent:x[1]}));facts.append(s)}});
+  if(!EXC.date&&!EXC.depart){facts.append(Object.assign(el("span"),{textContent:"Date, horaires et point de départ : communiqués par le comité d'organisation"}))}
+
+  /* ===== parallaxe douce (désactivée si mouvement réduit) ===== */
+  var stage=document.getElementById("stage"),layers=stage.querySelectorAll("[data-speed]"),tick=false;
+  if(!matchMedia("(prefers-reduced-motion: reduce)").matches){
+    addEventListener("scroll",function(){if(tick)return;tick=true;requestAnimationFrame(function(){
+      var y=Math.min(scrollY,stage.offsetHeight);
+      layers.forEach(function(l){l.style.transform="translate3d(0,"+(y*l.dataset.speed)+"px,0)"});tick=false})},{passive:true});
+  }
+  /* la porte s'ouvre sur la Médina si la photo est présente, sinon sur une arcade d'El Jem */
+  var im=new Image();im.onerror=function(){document.getElementById("gate").classList.add("no-medina")};im.src="assets/img/medina.jpg";
+
+  /* ===== formulaire ===== */
+  var O=function(a){return a.map(function(x){return [x,x]})};
+  var YES=["participe",["Oui","Je ne sais pas encore"]];
+  var N=[["0","Aucun"],["1","1"],["2","2"],["3","3"],["4","4"],["5","5"]];
+  function party(d){
+    if(d.participe!=="Oui"&&d.participe!=="Je ne sais pas encore")return 0;
+    return 1+Number(d.adultes||0)+Number(d.enfants||0);
+  }
+  var steps=[
+   {t:"Venez-vous à l'excursion ?",h:"Quelques questions suffisent pour organiser le transport et les visites.",f:[
+     {k:"email",l:"Adresse e-mail",t:"email",r:1,ph:"vous@universite.tn",h:"Utilisez la même adresse que pour votre confirmation de participation."},
+     {k:"prenom",l:"Prénom",t:"text",r:1,ac:"given-name",max:80},
+     {k:"nom",l:"Nom",t:"text",r:1,ac:"family-name",max:80},
+     {k:"participe",l:"Souhaitez-vous participer à l'excursion ?",t:"radio",r:1,o:[["Oui","Oui, je participe"],["Non","Non, je ne participerai pas"],["Je ne sais pas encore","Je ne sais pas encore"]]}]},
+   {t:"Votre parcours",h:"Choisissez votre formule et dites-nous qui vous accompagne.",f:[
+     {k:"formule",l:"Que souhaitez-vous découvrir ?",t:"radio",r:1,i:YES,o:[["El Jem","El Jem : l'amphithéâtre"],["Médina","Médina de Sousse"],["Les deux","Les deux : le parcours complet"]]},
+     {k:"adultes",l:"Adultes qui vous accompagnent (sans vous compter)",t:"select",o:N,i:YES},
+     {k:"enfants",l:"Enfants qui vous accompagnent",t:"select",o:N,i:YES},
+     {k:"accompagnants",l:"Prénoms, noms et, pour les enfants, l'âge",t:"area",r:1,ph:"Ex. : Marie Dupont (adulte) ; Léo Dupont (8 ans)",h:"Chaque accompagnant compte pour le transport et l'accueil.",c:function(d){return party(d)>1}}]},
+   {t:"Pour que tout soit confortable",f:[
+     {k:"mobilite",l:"Un participant a-t-il des difficultés de mobilité ?",t:"radio",r:1,o:[["Oui","Oui"],["Non","Non"]],i:YES,h:"L'amphithéâtre d'El Jem comporte de nombreux escaliers et des sols irréguliers."},
+     {k:"mobilite_detail",l:"Précisez pour que nous puissions adapter la visite",t:"area",r:1,i:["mobilite","Oui"]},
+     {k:"remarque",l:"Un message pour l'équipe ?",t:"area",max:600,i:YES}]}
+  ];
+
+  /* compteur en direct (confort visuel : le total officiel est recalculé par le serveur) */
+  var counter=null,last=-1;
+  function ensureCounter(){
+    if(counter&&document.body.contains(counter))return counter;
+    var c=el("div","count");c.hidden=true;c.setAttribute("aria-live","polite");
+    c.innerHTML='<output id="cnt">1</output><div><b>personne(s) à prendre en charge</b><span id="cnt_d"></span></div>';
+    var card=document.getElementById("card"),h=card.querySelector("h2");
+    if(h&&card.querySelector(".step")&&card.querySelector('[data-k="adultes"]')){h.after(c);counter=c;last=-1}else counter=null;
+    return counter;
+  }
+  function live(d){
+    var c=ensureCounter();if(!c)return;
+    var n=party(d);c.hidden=n===0;if(!n||n===last)return;last=n;
+    var o=c.querySelector("output");o.textContent=n;o.classList.add("bump");setTimeout(function(){o.classList.remove("bump")},260);
+    var a=Number(d.adultes||0),e=Number(d.enfants||0),t="1 participant";
+    if(a)t+=" + "+a+" adulte"+(a>1?"s":"");if(e)t+=" + "+e+" enfant"+(e>1?"s":"");
+    c.querySelector("#cnt_d").textContent=t;
+  }
+
+  function done(d,res){
+    var o=el("div","ok");
+    o.innerHTML='<svg class="seal" viewBox="0 0 96 96" aria-hidden="true"><path class="arc" d="M16 84V44a32 32 0 0 1 64 0v40z"/><path class="t" d="M34 56l10 10 20-22"/></svg>';
+    var who=d.prenom?", "+d.prenom:"";
+    if(d.participe==="Non"){
+      o.append(el("h2","","Merci"+who+", c'est noté."));
+      o.append(el("p","hint","Nous avons bien enregistré que vous ne participerez pas à l'excursion. Un changement d'avis ? Remplissez à nouveau ce formulaire avec la même adresse e-mail."));
+    }else{
+      var n=res.total!=null&&res.total>0?res.total:party(d), oui=d.participe==="Oui";
+      o.append(el("h2","",oui?"Votre participation est enregistrée"+who+".":"Merci"+who+", nous revenons vers vous."));
+      var b=el("div","big");b.append(el("strong","",String(oui?n:party(d))),el("span","",oui?"PERSONNE(S) PRISE(S) EN CHARGE":"PERSONNE(S) À CONFIRMER"));
+      o.append(b);
+      o.append(el("p","hint",(oui?"Le comité d'organisation vous communiquera la date, les horaires et le point de départ par e-mail ou WhatsApp.":"Le comité vous recontactera pour confirmer votre participation.")+(res.updated?" Votre réponse précédente a été mise à jour.":"")+" Pour modifier, remplissez à nouveau ce formulaire avec la même adresse e-mail."));
+    }
+    var a=el("a","","Indiquer mon arrivée à Sousse");a.href="arrival.html?email="+encodeURIComponent(d.email||"")+"&prenom="+encodeURIComponent(d.prenom||"")+"&nom="+encodeURIComponent(d.nom||"");
+    var s=el("a","s","Retour au site RIPU26");s.href="https://www.ripusousse.com";
+    o.append(a,s);return o;
+  }
+
+  RIPU.mount({form:3,endpoint:"/api/submit",card:"#card",steps:steps,onChange:live,done:done,
+    onStep:function(){counter=null;last=-1;ensureCounter()},
+    labels:{send:"Envoyer ma réponse"}});
+})();
+</script>
+</body>
+</html>

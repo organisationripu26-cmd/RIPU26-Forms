@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RIPU26 · Administration des 3 Bases de Données</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --n: #1D0F38; --v: #3A1F5C; --vv: #5B14D6; --l: #E2AAEF; --g: #F6C945; --b: #FAF7FF;
+  --bg: #0D061A; --card-bg: rgba(29, 15, 56, 0.7); --border: rgba(250, 247, 255, 0.18);
+  --mut: #B3A4C9; --success: #2ECC71; --err: #FFB4C8;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh;
+  font: 400 15px/1.55 'Poppins', system-ui, sans-serif;
+  color: var(--b); background: var(--bg);
+  background: radial-gradient(circle at top, #2C1550 0%, #0D061A 70%);
+}
+header {
+  border-bottom: 1px solid var(--border);
+  padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  background: rgba(13, 6, 26, 0.8); backdrop-filter: blur(16px); position: sticky; top: 0; z-index: 100;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand svg { width: 32px; height: 32px; flex: none; }
+.brand h1 { font: 700 20px 'Fraunces', serif; margin: 0; letter-spacing: 0.03em; color: var(--g); }
+.brand span { font-size: 12px; color: var(--mut); display: block; }
+.auth-bar { display: flex; align-items: center; gap: 10px; }
+input[type="password"], input[type="text"], select {
+  background: rgba(250, 247, 255, 0.08); border: 1.5px solid var(--border);
+  color: #fff; padding: 8px 14px; border-radius: 10px; font: inherit; font-size: 14px;
+}
+input:focus, select:focus { outline: 2px solid var(--g); border-color: var(--g); }
+button {
+  background: var(--g); color: var(--n); border: 0; font-weight: 600;
+  padding: 9px 18px; border-radius: 999px; cursor: pointer; transition: 0.2s; font-size: 14px;
+}
+button:hover { opacity: 0.9; transform: translateY(-1px); }
+button.sec { background: transparent; color: var(--b); border: 1.5px solid var(--border); }
+button.sec:hover { border-color: var(--g); color: var(--g); }
+
+main { max-width: 1300px; margin: 0 auto; padding: 24px 18px 60px; }
+.tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 12px; overflow-x: auto; }
+.tab-btn {
+  background: rgba(250, 247, 255, 0.05); color: var(--mut); border: 1px solid var(--border);
+  padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap;
+}
+.tab-btn.active { background: var(--vv); color: #fff; border-color: var(--l); box-shadow: 0 4px 12px rgba(91, 20, 214, 0.4); }
+
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
+  padding: 18px 20px; backdrop-filter: blur(12px);
+}
+.stat-card h3 { margin: 0 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mut); }
+.stat-card .val { font: 700 32px/1 'Fraunces', serif; color: var(--g); }
+
+.toolbar { display: flex; gap: 12px; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+.search-box { flex: 1; min-width: 240px; }
+.search-box input { width: 100%; }
+.export-btns { display: flex; gap: 8px; }
+
+.table-container {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
+  overflow-x: auto; backdrop-filter: blur(12px);
+}
+table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13.5px; }
+th { background: rgba(29, 15, 56, 0.9); padding: 14px 16px; font-weight: 600; color: var(--l); border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 12px 16px; border-bottom: 1px solid rgba(250, 247, 255, 0.08); vertical-align: top; }
+tr:hover td { background: rgba(250, 247, 255, 0.04); }
+.badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+.badge.ok { background: rgba(46, 204, 113, 0.2); color: #2ECC71; border: 1px solid rgba(46, 204, 113, 0.4); }
+.badge.warn { background: rgba(246, 201, 69, 0.2); color: #F6C945; border: 1px solid rgba(246, 201, 69, 0.4); }
+
+.status-msg { padding: 40px; text-align: center; color: var(--mut); font-size: 16px; }
+.login-gate {
+  max-width: 440px; margin: 80px auto; background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 20px; padding: 36px 28px; text-align: center; backdrop-filter: blur(20px);
+}
+.login-gate h2 { font: 700 24px 'Fraunces', serif; margin: 0 0 8px; color: var(--g); }
+.login-gate p { color: var(--mut); margin: 0 0 24px; font-size: 14px; }
+.login-gate input { width: 100%; margin-bottom: 16px; }
+.login-gate button { width: 100%; padding: 12px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 64 64" fill="none" stroke="#E2AAEF" stroke-width="3" stroke-linecap="round"><path d="M32 56V34M32 34L18 22M32 34l14-12M18 22V10M46 22V12M18 22h-8M46 22h8"/><g fill="#F6C945" stroke="none"><circle cx="32" cy="56" r="4"/><circle cx="18" cy="10" r="4"/><circle cx="46" cy="12" r="4"/><circle cx="10" cy="22" r="3"/><circle cx="54" cy="22" r="3"/></g></svg>
+    <div>
+      <h1>RIPU26 · Administration</h1>
+      <span>Gestion unifiée des 3 bases de données</span>
+    </div>
+  </div>
+  <div class="auth-bar" id="authBar" style="display:none">
+    <span id="tokStatus" style="font-size:12px;color:var(--mut)">Connecté</span>
+    <button class="sec" onclick="logout()">Déconnexion</button>
+  </div>
+</header>
+
+<main>
+  <div id="loginGate" class="login-gate">
+    <h2>Accès Administrateur</h2>
+    <p>Entrez votre jeton secret <code>ADMIN_TOKEN</code> pour consulter et gérer les 3 bases de données.</p>
+    <form onsubmit="doLogin(event)">
+      <input type="password" id="tokenInput" placeholder="ADMIN_TOKEN secret..." required autocomplete="current-password">
+      <button type="submit">Se connecter</button>
+    </form>
+  </div>
+
+  <div id="adminApp" style="display:none">
+    <div class="tabs">
+      <button class="tab-btn active" data-view="participants" onclick="switchView('participants', this)">Base 1 : Confirmations</button>
+      <button class="tab-btn" data-view="arrivees" onclick="switchView('arrivees', this)">Base 2 : Arrivées (Détail)</button>
+      <button class="tab-btn" data-view="accueil" onclick="switchView('accueil', this)">Base 2 : Accueil Aéroport</button>
+      <button class="tab-btn" data-view="excursion" onclick="switchView('excursion', this)">Base 3 : Excursion (Détail)</button>
+      <button class="tab-btn" data-view="totaux" onclick="switchView('totaux', this)">Base 3 : Excursion (Synthèse)</button>
+    </div>
+
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Rechercher par nom, email, institution, vol..." oninput="filterData()">
+      </div>
+      <div class="export-btns">
+        <button class="sec" onclick="exportData('csv')">Exporter en CSV</button>
+        <button class="sec" onclick="exportData('json')">Exporter en JSON</button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div id="tableContent" class="status-msg">Chargement des données...</div>
+    </div>
+  </div>
+</main>
+
+<script>
+let currentToken = localStorage.getItem('ripu26_admin_token') || '';
+let currentView = 'participants';
+let rawData = [];
+
+function init() {
+  if (currentToken) {
+    document.getElementById('loginGate').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'block';
+    document.getElementById('authBar').style.display = 'flex';
+    loadView(currentView);
+  } else {
+    document.getElementById('loginGate').style.display = 'block';
+    document.getElementById('adminApp').style.display = 'none';
+    document.getElementById('authBar').style.display = 'none';
+  }
+}
+
+function doLogin(e) {
+  e.preventDefault();
+  const input = document.getElementById('tokenInput').value.trim();
+  if (input) {
+    currentToken = input;
+    localStorage.setItem('ripu26_admin_token', input);
+    init();
+  }
+}
+
+function logout() {
+  localStorage.removeItem('ripu26_admin_token');
+  currentToken = '';
+  init();
+}
+
+function switchView(view, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentView = view;
+  document.getElementById('searchInput').value = '';
+  loadView(view);
+}
+
+async function loadView(view) {
+  const container = document.getElementById('tableContent');
+  container.innerHTML = 'Chargement des données...';
+  try {
+    const res = await fetch(`/api/export?view=${view}&format=json`, {
+      headers: { 'Authorization': `Bearer ${currentToken}` }
+    });
+    if (res.status === 401) {
+      alert('Jeton non autorisé. Vérifiez votre ADMIN_TOKEN.');
+      logout();
+      return;
+    }
+    if (!res.ok) throw new Error('Erreur HTTP ' + res.status);
+    rawData = await res.json();
+    renderStats(view, rawData);
+    renderTable(rawData);
+  } catch (err) {
+    container.innerHTML = `<span style="color:var(--err)">Erreur lors du chargement : ${err.message}</span>`;
+  }
+}
+
+function renderStats(view, data) {
+  const grid = document.getElementById('statsGrid');
+  grid.innerHTML = '';
+  if (!Array.isArray(data)) return;
+
+  if (view === 'participants') {
+    const total = data.length;
+    const confirmes = data.filter(r => r.statut === 'Confirmé').length;
+    grid.innerHTML = `
+      <div class="stat-card"><h3>Total Inscrits</h3><div class="val">${total}</div></div>
+      <div class="stat-card"><h3>Confirmés</h3><div class="val">${confirmes}</div></div>
+      <div class="stat-card"><h3>Non Confirmés</h3><div class="val">${total - confirmes}</div></div>
+    `;
+  } else if (view === 'arrivees') {
+    const total = data.length;
+    const avion = data.filter(r => r.mode === 'Avion').length;
+    const totalPax = data.reduce((acc, r) => acc + (Number(r.total_personnes) || 1), 0);
+    grid.innerHTML = `
+      <div class="stat-card"><h3>Fiches Arrivées</h3><div class="val">${total}</div></div>
+      <div class="stat-card"><h3>Vol / Avion</h3><div class="val">${avion}</div></div>
+      <div class="stat-card"><h3>Total Personnes</h3><div class="val">${totalPax}</div></div>
+    `;
+  } else if (view === 'excursion') {
+    const total = data.length;
+    const oui = data.filter(r => r.participe === 'Oui').length;
+    const paxTrans = data.reduce((acc, r) => acc + (Number(r.personnes_a_transporter) || 0), 0);
+    grid.innerHTML = `
+      <div class="stat-card"><h3>Fiches Excursion</h3><div class="val">${total}</div></div>
+      <div class="stat-card"><h3>Participants Oui</h3><div class="val">${oui}</div></div>
+      <div class="stat-card"><h3>Personnes Transport</h3><div class="val">${paxTrans}</div></div>
+    `;
+  }
+}
+
+function renderTable(data) {
+  const container = document.getElementById('tableContent');
+  if (!Array.isArray(data) || data.length === 0) {
+    container.innerHTML = '<div class="status-msg">Aucun enregistrement trouvé dans cette base.</div>';
+    return;
+  }
+  const cols = Object.keys(data[0]);
+  let html = '<table><thead><tr>';
+  cols.forEach(c => html += `<th>${escapeHtml(c.replace(/_/g, ' '))}</th>`);
+  html += '</tr></thead><tbody>';
+
+  data.forEach(row => {
+    html += '<tr>';
+    cols.forEach(c => {
+      let val = row[c];
+      if (val === null || val === undefined) val = '—';
+      if (typeof val === 'boolean') val = val ? 'Oui' : 'Non';
+      if (Array.isArray(val)) val = val.join(', ');
+
+      if (val === 'Confirmé' || val === 'Oui') {
+        html += `<td><span class="badge ok">${escapeHtml(String(val))}</span></td>`;
+      } else if (val === 'Non' || val === 'Non confirmé') {
+        html += `<td><span class="badge warn">${escapeHtml(String(val))}</span></td>`;
+      } else {
+        html += `<td>${escapeHtml(String(val))}</td>`;
+      }
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+function filterData() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  if (!q) { renderTable(rawData); return; }
+  const filtered = rawData.filter(row => {
+    return Object.values(row).some(v => String(v || '').toLowerCase().includes(q));
+  });
+  renderTable(filtered);
+}
+
+function exportData(format) {
+  const url = `/api/export?view=${currentView}${format === 'json' ? '&format=json' : ''}`;
+  fetch(url, { headers: { 'Authorization': `Bearer ${currentToken}` } })
+    .then(r => r.blob())
+    .then(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `ripu26_${currentView}.${format}`;
+      a.click();
+    }).catch(err => alert('Erreur d\'exportation : ' + err.message));
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+init();
+</script>
+</body>
+</html>

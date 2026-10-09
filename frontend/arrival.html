@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>RIPU26 · Informations d'arrivée</title>
+<meta name="description" content="RIPU26 — indiquez votre arrivée en Tunisie (vol, date, heure, accompagnants) pour que l'équipe vous accueille à l'aéroport.">
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ARRIVÉE — lumineux, méditerranéen, « carte d'embarquement ».
+   Photo optionnelle : déposez frontend/assets/img/arrival.jpg (ciel/mer/aéroport, photographie réelle).
+   Sans photo, le dégradé ciel-mer ci-dessous s'affiche. */
+:root{--ink:#1D0F38;--v:#3A1F5C;--vv:#5B14D6;--lil:#E2AAEF;--gold:#F6C945;--sea:#1F7F9A;--sea-d:#0E4F66;--sand:#F3E9DA;--page:#F7F4FC;--line:#D9D0EA;--mut:#5E5273;--err:#B3203F}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:400 16px/1.55 Poppins,system-ui,sans-serif;color:var(--ink);background:var(--page);padding-bottom:env(safe-area-inset-bottom)}
+.sky{position:absolute;inset:0 0 auto 0;height:min(78svh,720px);z-index:0;overflow:hidden;
+  background:
+   linear-gradient(180deg,rgba(29,15,56,.28) 0%,rgba(29,15,56,0) 38%,rgba(247,244,252,.0) 62%,var(--page) 100%),
+   url(assets/img/arrival.jpg) center 40%/cover no-repeat,
+   linear-gradient(180deg,#8CC5DB 0%,#CFE7EE 34%,#F1E6D3 58%,#7FB6C8 74%,#DDEBF0 90%,var(--page) 100%)}
+.sky::after{content:"";position:absolute;inset:auto 0 0 0;height:42%;background:linear-gradient(180deg,rgba(255,255,255,0),var(--page))}
+main{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:max(28px,env(safe-area-inset-top)) 18px 64px}
+.top{display:flex;align-items:center;gap:12px;color:#fff;text-shadow:0 1px 14px rgba(29,15,56,.45)}
+.top svg{width:38px;flex:none}
+.top b{font:700 20px Fraunces,serif;letter-spacing:.04em}
+.top span{font-size:13px;opacity:.95}
+.hero{margin:clamp(30px,7vw,72px) 0 clamp(26px,5vw,44px);color:#fff;max-width:620px;text-shadow:0 2px 24px rgba(29,15,56,.5)}
+.eyebrow{font:600 12px Poppins;letter-spacing:.18em;text-transform:uppercase;opacity:.95;margin:0 0 10px}
+h1{font:700 clamp(34px,7.4vw,64px)/1.04 Fraunces,serif;margin:0 0 12px;letter-spacing:-.01em}
+.lead{font-size:clamp(15px,2.2vw,18px);margin:0;max-width:34em}
+.route{display:flex;align-items:center;gap:10px;margin-top:22px;font:600 13px Poppins;letter-spacing:.12em;text-transform:uppercase}
+.route i{flex:1;max-width:220px;height:0;border-top:2px dashed rgba(255,255,255,.85);position:relative}
+.route i::after{content:"";position:absolute;right:-2px;top:-7px;width:12px;height:12px;border-right:2px solid #fff;border-top:2px solid #fff;transform:rotate(45deg)}
+.route em{font-style:normal;background:rgba(29,15,56,.42);padding:6px 12px;border-radius:999px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+
+/* ---- carte d'embarquement ---- */
+.pass{display:grid;grid-template-columns:minmax(0,1fr) 288px;background:#fff;border-radius:22px;box-shadow:0 30px 70px -20px rgba(29,15,56,.35),0 2px 0 rgba(255,255,255,.7) inset;overflow:hidden;border:1px solid var(--line)}
+.pass.is-done{grid-template-columns:1fr}
+.card{padding:clamp(22px,4vw,40px)}
+.stub{background:linear-gradient(165deg,var(--v),var(--ink));color:#fff;padding:26px 24px;border-left:2px dashed rgba(255,255,255,.35);position:relative}
+.stub h3{font:600 11px Poppins;letter-spacing:.2em;text-transform:uppercase;margin:0 0 4px;color:var(--lil)}
+.stub .dest{font:700 30px/1 Fraunces,serif;margin:0 0 18px}
+.stub dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:14px 10px}
+.stub dt{font:500 10px Poppins;letter-spacing:.16em;text-transform:uppercase;color:var(--lil);opacity:.9}
+.stub dd{margin:2px 0 0;font:600 15px/1.25 Poppins;word-break:break-word;min-height:1.25em}
+.stub dd.wide,.stub dt.wide{grid-column:1/-1}
+.stub dd.empty{opacity:.4}
+.bar{height:34px;margin-top:22px;border-radius:3px;opacity:.55;background:repeating-linear-gradient(90deg,#fff 0 2px,transparent 2px 4px,#fff 4px 5px,transparent 5px 9px,#fff 9px 12px,transparent 12px 14px)}
+
+h2{font:500 clamp(22px,3.4vw,28px)/1.2 Fraunces,serif;margin:0 0 6px;outline:none}
+.hint{color:var(--mut);font-size:14px;margin:0 0 20px}
+.f{margin:0 0 18px}.f[hidden]{display:none}
+.f .hint{margin:6px 0 0;font-size:13px}
+label.q,legend{display:block;font-weight:500;margin:0 0 7px;padding:0;font-size:15px}
+fieldset{border:0;padding:0;margin:0}
+input[type=text],input[type=email],input[type=tel],input[type=time],select,textarea{width:100%;min-height:50px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:#FCFBFF;color:var(--ink);font:inherit;transition:border-color .2s,box-shadow .2s}
+textarea{min-height:96px;resize:vertical}
+input:hover,select:hover,textarea:hover{border-color:#B9A9DA}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--vv);box-shadow:0 0 0 4px rgba(91,20,214,.16)}
+button:focus-visible,.o:focus-within{outline:3px solid var(--vv);outline-offset:2px}
+.o{display:flex;gap:12px;align-items:center;min-height:50px;padding:10px 14px;margin-bottom:8px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;transition:.2s;background:#FCFBFF}
+.o:hover{border-color:#B9A9DA}
+.o:has(input:checked){background:#F1EAFD;border-color:var(--vv)}
+.o input{accent-color:var(--vv);width:20px;height:20px;flex:none}
+.err{color:var(--err);font-size:13px;margin-top:6px}.err:empty{display:none}
+.bad input,.bad select,.bad textarea{border-color:var(--err)}
+.nav{display:flex;gap:10px;margin-top:26px}
+button{font:600 16px Poppins;min-height:52px;border-radius:999px;border:0;padding:0 28px;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
+.pri{flex:1;background:var(--v);color:#fff}
+.pri:hover{background:var(--vv);transform:translateY(-1px);box-shadow:0 10px 24px -8px rgba(91,20,214,.55)}
+.pri:disabled{opacity:.6;cursor:wait;transform:none}
+.sec{background:transparent;color:var(--v);border:1.5px solid var(--line)}
+.sec:hover{border-color:var(--v)}
+.dots{display:flex;gap:7px;margin:0 0 20px}
+.dots i{height:5px;flex:1;max-width:56px;border-radius:99px;background:var(--line);transition:background .4s}
+.dots i.on{background:linear-gradient(90deg,var(--vv),var(--sea))}
+.step{animation:in .45s cubic-bezier(.2,.7,.2,1)}.step.back{animation-name:inb}
+@keyframes in{from{opacity:0;transform:translateX(22px)}}@keyframes inb{from{opacity:0;transform:translateX(-22px)}}
+.warn{background:#FCE9ED;color:#7D1730;padding:12px 14px;border-radius:12px;margin-bottom:14px;font-size:14px}
+.hp{position:absolute;left:-9999px}
+
+/* ---- confirmation ---- */
+.ok{max-width:640px;margin:0 auto;text-align:center}
+.ok .stamp{width:92px;height:92px;margin:0 auto 14px;display:block}
+.ok .stamp circle{fill:none;stroke:var(--sea);stroke-width:3}
+.ok .stamp path{fill:none;stroke:var(--sea);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60;animation:dr .9s .25s forwards}
+@keyframes dr{to{stroke-dashoffset:0}}
+.ok .hint{font-size:15px}
+.recap{text-align:left;margin:22px 0;padding:0;list-style:none;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.recap li{display:flex;justify-content:space-between;gap:16px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:15px}
+.recap li:last-child{border:0}.recap li span{color:var(--mut)}.recap li b{text-align:right}
+.recap li.big{background:#F1EAFD;font-size:17px}
+.ok a{display:block;margin-top:10px;padding:15px;border-radius:999px;text-decoration:none;font-weight:600;background:var(--v);color:#fff}
+.ok a.s{background:none;color:var(--v);border:1.5px solid var(--line)}
+.foot{margin-top:26px;text-align:center;font-size:13px;color:var(--mut)}.foot a{color:var(--v)}
+
+@media(max-width:860px){
+  .pass{grid-template-columns:1fr}
+  .stub{order:-1;border-left:0;border-bottom:2px dashed rgba(255,255,255,.35);padding:18px 20px}
+  .stub .dest{font-size:24px;margin-bottom:12px}
+  .stub dl{grid-template-columns:repeat(3,1fr)}
+  .stub dd.wide,.stub dt.wide{grid-column:auto}
+  .bar{display:none}
+}
+@media(max-width:420px){.stub dl{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.ok .stamp path{stroke-dashoffset:0}}
+</style>
+</head>
+<body>
+<div class="sky" aria-hidden="true"></div>
+<main>
+  <div class="top">
+    <svg viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M32 56V34M32 34L18 22M32 34l14-12M18 22V10M46 22V12M18 22h-8M46 22h8"/><g fill="#F6C945" stroke="none"><circle cx="32" cy="56" r="4"/><circle cx="18" cy="10" r="4"/><circle cx="46" cy="12" r="4"/><circle cx="10" cy="22" r="3"/><circle cx="54" cy="22" r="3"/></g></svg>
+    <div><b>RIPU26</b><br><span>30 &amp; 31 octobre 2026 · Sousse, Tunisie</span></div>
+  </div>
+
+  <header class="hero">
+    <p class="eyebrow">Informations d'arrivée</p>
+    <h1>Bienvenue en Tunisie</h1>
+    <p class="lead">Dites-nous quand et comment vous arrivez : notre équipe vous attendra à l'aéroport et suivra votre vol, même en cas de retard.</p>
+    <div class="route" aria-hidden="true"><em id="routeFrom">Votre ville</em><i></i><em>Sousse</em></div>
+  </header>
+
+  <div class="pass" id="pass">
+    <section class="card" id="card" aria-live="polite" aria-label="Formulaire d'arrivée"></section>
+    <aside class="stub" id="stub" aria-label="Récapitulatif de votre arrivée">
+      <h3>Carte d'accueil</h3>
+      <p class="dest">Sousse</p>
+      <dl>
+        <dt class="wide">Passager</dt><dd class="wide" id="s_name"></dd>
+        <dt>Vol</dt><dd id="s_vol"></dd>
+        <dt>Date</dt><dd id="s_date"></dd>
+        <dt>Atterrissage</dt><dd id="s_time"></dd>
+        <dt>Aéroport</dt><dd id="s_apt"></dd>
+        <dt>Personnes</dt><dd id="s_pax"></dd>
+      </dl>
+      <div class="bar" aria-hidden="true"></div>
+    </aside>
+  </div>
+  <p class="foot">Une question ? <a href="mailto:ripusousse@gmail.com">ripusousse@gmail.com</a> · +216 55 595 234<br>Vos informations sont utilisées uniquement par le comité d'organisation de RIPU26 pour préparer votre accueil.</p>
+  <noscript><p class="warn">Ce formulaire nécessite JavaScript. Écrivez-nous à ripusousse@gmail.com.</p></noscript>
+</main>
+
+<script src="js/engine.js"></script>
+<script>
+(function(){
+  var el=RIPU.el;
+  var O=function(a){return a.map(function(x){return [x,x]})};
+  var AVION=["mode","Avion"];
+  var isAvion=function(d){return d.mode==="Avion"};
+  var DATES=[["2026-10-24","Samedi 24 octobre"],["2026-10-25","Dimanche 25 octobre"],["2026-10-26","Lundi 26 octobre"],["2026-10-27","Mardi 27 octobre"],["2026-10-28","Mercredi 28 octobre"],["2026-10-29","Jeudi 29 octobre"],["2026-10-30","Vendredi 30 octobre"],["Autre date","Autre date"]];
+  var AIRPORTS=O(["Monastir Habib-Bourguiba (MIR)","Enfidha-Hammamet (NBE)","Tunis-Carthage (TUN)","Autre"]);
+  var COUNT=[["0","Je voyage seul(e)"],["1","1 personne"],["2","2 personnes"],["3","3 personnes"],["4","4 personnes"],["5","5 personnes"],["6","6 personnes"]];
+
+  var steps=[
+   {t:"Qui arrive ?",h:"Ces informations permettent à l'équipe de vous reconnaître et de vous joindre à l'aéroport.",f:[
+     {k:"email",l:"Adresse e-mail",t:"email",r:1,ph:"vous@universite.tn",h:"Utilisez la même adresse que pour votre confirmation de participation."},
+     {k:"prenom",l:"Prénom",t:"text",r:1,ac:"given-name",max:80},
+     {k:"nom",l:"Nom",t:"text",r:1,ac:"family-name",max:80},
+     {k:"telephone",l:"Téléphone joignable à votre arrivée (WhatsApp de préférence)",t:"tel",r:1,ph:"+216 55 595 234",h:"Format international, avec l'indicatif du pays."}]},
+   {t:"Votre voyage",h:"Nous suivons votre vol, même en cas de retard.",f:[
+     {k:"mode",l:"Comment arrivez-vous en Tunisie ?",t:"radio",r:1,o:[["Avion","J'arrive en avion"],["Autre","J'arrive par mes propres moyens (voiture, train, bateau…)"]]},
+     {k:"date_arrivee",l:"Date d'arrivée en Tunisie",t:"select",r:1,o:DATES,i:["mode",["Avion","Autre"]]},
+     {k:"aeroport",l:"Aéroport d'arrivée",t:"select",r:1,o:AIRPORTS,i:AVION},
+     {k:"aeroport_autre",l:"Nom de l'aéroport",t:"text",r:1,ph:"Ex. Djerba-Zarzis",i:["aeroport","Autre"],c:function(d){return isAvion(d)&&d.aeroport==="Autre"}},
+     {k:"compagnie",l:"Compagnie aérienne",t:"text",ph:"Tunisair, Air France, Transavia…",i:AVION},
+     {k:"vol",l:"Numéro de vol de l'arrivée en Tunisie",t:"text",r:1,ph:"TU 718",h:"Le vol qui atterrit en Tunisie (lettres + chiffres, ex. TU 718).",i:AVION},
+     {k:"heure",l:"Heure d'atterrissage prévue (heure de Tunis)",t:"time",r:1,i:AVION},
+     {k:"ville_depart",l:"Ville de départ du vol",t:"text",ph:"Paris, Genève, Montréal…",i:AVION},
+     {k:"correspondance",l:"Votre voyage comporte-t-il une correspondance ?",t:"radio",o:[["Oui","Oui"],["Non","Non"]],i:AVION},
+     {k:"ville_correspondance",l:"Ville de la correspondance",t:"text",r:1,ph:"Ex. Istanbul",c:function(d){return isAvion(d)&&d.correspondance==="Oui"}}]},
+   {t:"Voyagez-vous accompagné(e) ?",h:"Chaque personne compte pour la navette et l'accueil.",f:[
+     {k:"nb_accompagnants",l:"Nombre de personnes qui voyagent avec vous (sans vous compter)",t:"select",r:1,o:COUNT},
+     {k:"accompagnants",l:"Prénoms, noms et, pour les enfants, l'âge",t:"area",r:1,ph:"Ex. : Marie Dupont (adulte) ; Léo Dupont (8 ans)",c:function(d){return Number(d.nb_accompagnants)>0}},
+     {k:"besoins",l:"Besoins particuliers pour l'accueil ou le transport",t:"multi",o:O(["Mobilité réduite","Siège enfant","Bagages volumineux","Autre"]),h:"Laissez vide si vous n'avez pas de besoin particulier."},
+     {k:"besoins_detail",l:"Précisez votre besoin",t:"area",r:1,i:["besoins","Autre"]}]},
+   {t:"Votre accueil à Sousse",h:"Dernières informations pour que tout soit prêt à votre arrivée.",f:[
+     {k:"navette",l:"Souhaitez-vous utiliser la navette RIPU26 depuis l'aéroport ?",t:"radio",r:1,o:O(["Oui","Non","Je ne sais pas encore"]),i:AVION,h:"Le comité vous confirmera l'organisation par e-mail ou WhatsApp."},
+     {k:"hotel",l:"Hôtel à Sousse (si vous le connaissez)",t:"text",max:120},
+     {k:"depart",l:"Date de départ de Tunisie",t:"select",o:O(["Samedi 31 octobre","Dimanche 1er novembre","Lundi 2 novembre","Plus tard","Je ne sais pas"])},
+     {k:"message",l:"Un message pour l'équipe d'accueil ?",t:"area",max:600}]}
+  ];
+
+  // ---- carte d'accueil en direct ----
+  function label(list,v){for(var i=0;i<list.length;i++)if(list[i][0]===v)return list[i][1];return v||""}
+  function put(id,v){var n=document.getElementById(id);n.textContent=v||"—";n.classList.toggle("empty",!v)}
+  function live(d){
+    put("s_name",((d.prenom||"")+" "+(d.nom||"")).trim());
+    put("s_vol",isAvion(d)?(d.vol||"").toUpperCase():"");
+    put("s_date",d.date_arrivee==="Autre date"?"Autre":d.date_arrivee?label(DATES,d.date_arrivee).replace(/^\S+ /,"").replace("octobre","oct."):"");
+    put("s_time",isAvion(d)?d.heure:"");
+    var m=(d.aeroport||"").match(/\(([A-Z]{3})\)/);put("s_apt",m?m[1]:(d.aeroport==="Autre"?"Autre":""));
+    put("s_pax",d.nb_accompagnants!=null&&d.nb_accompagnants!==""?String(1+Number(d.nb_accompagnants)):"");
+    document.getElementById("routeFrom").textContent=(isAvion(d)&&d.ville_depart)||"Votre ville";
+  }
+
+  // ---- confirmation ----
+  function done(d,res,D){
+    document.getElementById("pass").classList.add("is-done");
+    document.getElementById("stub").hidden=true;
+    var o=el("div","ok");
+    o.innerHTML='<svg class="stamp" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="36"/><path d="M24 41l11 11 21-24"/></svg>';
+    o.append(el("h2","","Votre arrivée est enregistrée"+(d.prenom?", "+d.prenom:"")+"."));
+    o.append(el("p","hint","Les informations ont bien été transmises à l'équipe d'accueil de RIPU26."+(res.updated?" Votre réponse précédente a été mise à jour.":"")+" Bienvenue en Tunisie !"));
+    var ul=el("ul","recap");
+    function row(k,v,cls){if(!v)return;var li=el("li",cls||"");li.append(el("span","",k),el("b","",v));ul.append(li)}
+    row("Date",label(DATES,d.date_arrivee));
+    if(d.mode==="Avion"){row("Vol",((d.compagnie?d.compagnie+" · ":"")+(d.vol||"")).toUpperCase().replace(/\s+·\s+/," · "));row("Atterrissage",d.heure);row("Aéroport",d.aeroport==="Autre"?d.aeroport_autre:d.aeroport)}
+    else row("Arrivée","Par vos propres moyens");
+    row("Personnes à accueillir",String(1+Number(d.nb_accompagnants||0)),"big");
+    o.append(ul);
+    o.append(el("p","hint","Un changement de vol ou d'horaire ? Remplissez à nouveau ce formulaire avec la même adresse e-mail : la dernière réponse fait foi."));
+    var a=el("a","","Découvrir l'excursion El Jem × Médina");a.href="excursion.html?email="+encodeURIComponent(d.email||"")+"&prenom="+encodeURIComponent(d.prenom||"")+"&nom="+encodeURIComponent(d.nom||"");
+    var b=el("a","s","Retour au site RIPU26");b.href="https://www.ripusousse.com";
+    o.append(a,b);return o;
+  }
+
+  RIPU.mount({form:2,endpoint:"/api/submit",card:"#card",steps:steps,onChange:live,done:done,
+    labels:{send:"Envoyer mes informations d'arrivée"}});
+  live({});
+})();
+</script>
+</body>
+</html>

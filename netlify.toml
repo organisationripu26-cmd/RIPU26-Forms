@@ -1,0 +1,43 @@
+[build]
+  publish = "frontend"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Résumé quotidien (totaux uniquement) — 07h00 UTC = 08h00 à Tunis
+[functions."daily-digest"]
+  schedule = "0 7 * * *"
+
+[[redirects]]
+  from = "/api/submit"
+  to = "/.netlify/functions/submit"
+  status = 200
+[[redirects]]
+  from = "/api/export"
+  to = "/.netlify/functions/export"
+  status = 200
+# URL courtes pour les QR codes
+[[redirects]]
+  from = "/arrivee"
+  to = "/arrival.html"
+  status = 200
+[[redirects]]
+  from = "/excursion"
+  to = "/excursion.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
