@@ -148,10 +148,8 @@ button{font:600 16px Poppins;min-height:52px;border-radius:999px;border:0;paddin
 (function(){
   var el=RIPU.el;
   var O=function(a){return a.map(function(x){return [x,x]})};
-  var AVION=["mode","Avion"];
-  var isAvion=function(d){return d.mode==="Avion"};
   var DATES=[["2026-10-24","Samedi 24 octobre"],["2026-10-25","Dimanche 25 octobre"],["2026-10-26","Lundi 26 octobre"],["2026-10-27","Mardi 27 octobre"],["2026-10-28","Mercredi 28 octobre"],["2026-10-29","Jeudi 29 octobre"],["2026-10-30","Vendredi 30 octobre"],["Autre date","Autre date"]];
-  var AIRPORTS=O(["Monastir Habib-Bourguiba (MIR)","Enfidha-Hammamet (NBE)","Tunis-Carthage (TUN)","Autre"]);
+  var AIRPORTS=O(["Monastir Habib-Bourguiba (MIR)"]);
   var COUNT=[["0","Je voyage seul(e)"],["1","1 personne"],["2","2 personnes"],["3","3 personnes"],["4","4 personnes"],["5","5 personnes"],["6","6 personnes"]];
 
   var steps=[
@@ -161,26 +159,19 @@ button{font:600 16px Poppins;min-height:52px;border-radius:999px;border:0;paddin
      {k:"nom",l:"Nom",t:"text",r:1,ac:"family-name",max:80},
      {k:"telephone",l:"Téléphone joignable à votre arrivée (WhatsApp de préférence)",t:"tel",r:1,ph:"+216 55 595 234",h:"Format international, avec l'indicatif du pays."}]},
    {t:"Votre voyage",h:"Nous suivons votre vol, même en cas de retard.",f:[
-     {k:"mode",l:"Comment arrivez-vous en Tunisie ?",t:"radio",r:1,o:[["Avion","J'arrive en avion"],["Autre","J'arrive par mes propres moyens (voiture, train, bateau…)"]]},
-     {k:"date_arrivee",l:"Date d'arrivée en Tunisie",t:"select",r:1,o:DATES,i:["mode",["Avion","Autre"]]},
-     {k:"aeroport",l:"Aéroport d'arrivée",t:"select",r:1,o:AIRPORTS,i:AVION},
-     {k:"aeroport_autre",l:"Nom de l'aéroport",t:"text",r:1,ph:"Ex. Djerba-Zarzis",i:["aeroport","Autre"],c:function(d){return isAvion(d)&&d.aeroport==="Autre"}},
-     {k:"compagnie",l:"Compagnie aérienne",t:"text",ph:"Tunisair, Air France, Transavia…",i:AVION},
-     {k:"vol",l:"Numéro de vol de l'arrivée en Tunisie",t:"text",r:1,ph:"TU 718",h:"Le vol qui atterrit en Tunisie (lettres + chiffres, ex. TU 718).",i:AVION},
-     {k:"heure",l:"Heure d'atterrissage prévue (heure de Tunis)",t:"time",r:1,i:AVION},
-     {k:"ville_depart",l:"Ville de départ du vol",t:"text",ph:"Paris, Genève, Montréal…",i:AVION},
-     {k:"correspondance",l:"Votre voyage comporte-t-il une correspondance ?",t:"radio",o:[["Oui","Oui"],["Non","Non"]],i:AVION},
-     {k:"ville_correspondance",l:"Ville de la correspondance",t:"text",r:1,ph:"Ex. Istanbul",c:function(d){return isAvion(d)&&d.correspondance==="Oui"}}]},
+     {k:"date_arrivee",l:"Date d'arrivée en Tunisie",t:"select",r:1,o:DATES},
+     {k:"aeroport",l:"Aéroport d'arrivée",t:"select",r:1,o:AIRPORTS},
+     {k:"compagnie",l:"Compagnie aérienne",t:"text",ph:"Tunisair, Air France, Transavia…"},
+     {k:"vol",l:"Numéro de vol de l'arrivée en Tunisie",t:"text",r:1,ph:"TU 718",h:"Le vol qui atterrit en Tunisie (lettres + chiffres, ex. TU 718)."},
+     {k:"heure",l:"Heure d'atterrissage prévue (heure de Tunis)",t:"time",r:1},
+     {k:"ville_depart",l:"Ville de départ du vol",t:"text",ph:"Paris, Genève, Montréal…"},
+     {k:"correspondance",l:"Votre voyage comporte-t-il une correspondance ?",t:"radio",o:[["Oui","Oui"],["Non","Non"]]},
+     {k:"ville_correspondance",l:"Ville de la correspondance",t:"text",r:1,ph:"Ex. Istanbul",c:function(d){return d.correspondance==="Oui"}}]},
    {t:"Voyagez-vous accompagné(e) ?",h:"Chaque personne compte pour la navette et l'accueil.",f:[
      {k:"nb_accompagnants",l:"Nombre de personnes qui voyagent avec vous (sans vous compter)",t:"select",r:1,o:COUNT},
      {k:"accompagnants",l:"Prénoms, noms et, pour les enfants, l'âge",t:"area",r:1,ph:"Ex. : Marie Dupont (adulte) ; Léo Dupont (8 ans)",c:function(d){return Number(d.nb_accompagnants)>0}},
      {k:"besoins",l:"Besoins particuliers pour l'accueil ou le transport",t:"multi",o:O(["Mobilité réduite","Siège enfant","Bagages volumineux","Autre"]),h:"Laissez vide si vous n'avez pas de besoin particulier."},
-     {k:"besoins_detail",l:"Précisez votre besoin",t:"area",r:1,i:["besoins","Autre"]}]},
-   {t:"Votre accueil à Sousse",h:"Dernières informations pour que tout soit prêt à votre arrivée.",f:[
-     {k:"navette",l:"Souhaitez-vous utiliser la navette RIPU26 depuis l'aéroport ?",t:"radio",r:1,o:O(["Oui","Non","Je ne sais pas encore"]),i:AVION,h:"Le comité vous confirmera l'organisation par e-mail ou WhatsApp."},
-     {k:"hotel",l:"Hôtel à Sousse (si vous le connaissez)",t:"text",max:120},
-     {k:"depart",l:"Date de départ de Tunisie",t:"select",o:O(["Samedi 31 octobre","Dimanche 1er novembre","Lundi 2 novembre","Plus tard","Je ne sais pas"])},
-     {k:"message",l:"Un message pour l'équipe d'accueil ?",t:"area",max:600}]}
+     {k:"besoins_detail",l:"Précisez votre besoin",t:"area",r:1,i:["besoins","Autre"]}]}
   ];
 
   // ---- carte d'accueil en direct ----
@@ -188,12 +179,12 @@ button{font:600 16px Poppins;min-height:52px;border-radius:999px;border:0;paddin
   function put(id,v){var n=document.getElementById(id);n.textContent=v||"—";n.classList.toggle("empty",!v)}
   function live(d){
     put("s_name",((d.prenom||"")+" "+(d.nom||"")).trim());
-    put("s_vol",isAvion(d)?(d.vol||"").toUpperCase():"");
+    put("s_vol",(d.vol||"").toUpperCase());
     put("s_date",d.date_arrivee==="Autre date"?"Autre":d.date_arrivee?label(DATES,d.date_arrivee).replace(/^\S+ /,"").replace("octobre","oct."):"");
-    put("s_time",isAvion(d)?d.heure:"");
-    var m=(d.aeroport||"").match(/\(([A-Z]{3})\)/);put("s_apt",m?m[1]:(d.aeroport==="Autre"?"Autre":""));
+    put("s_time",d.heure||"");
+    var m=(d.aeroport||"").match(/\(([A-Z]{3})\)/);put("s_apt",m?m[1]:"");
     put("s_pax",d.nb_accompagnants!=null&&d.nb_accompagnants!==""?String(1+Number(d.nb_accompagnants)):"");
-    document.getElementById("routeFrom").textContent=(isAvion(d)&&d.ville_depart)||"Votre ville";
+    document.getElementById("routeFrom").textContent=d.ville_depart||"Votre ville";
   }
 
   // ---- confirmation ----
@@ -207,8 +198,9 @@ button{font:600 16px Poppins;min-height:52px;border-radius:999px;border:0;paddin
     var ul=el("ul","recap");
     function row(k,v,cls){if(!v)return;var li=el("li",cls||"");li.append(el("span","",k),el("b","",v));ul.append(li)}
     row("Date",label(DATES,d.date_arrivee));
-    if(d.mode==="Avion"){row("Vol",((d.compagnie?d.compagnie+" · ":"")+(d.vol||"")).toUpperCase().replace(/\s+·\s+/," · "));row("Atterrissage",d.heure);row("Aéroport",d.aeroport==="Autre"?d.aeroport_autre:d.aeroport)}
-    else row("Arrivée","Par vos propres moyens");
+    row("Vol",((d.compagnie?d.compagnie+" · ":"")+(d.vol||"")).toUpperCase().replace(/\s+·\s+/," · "));
+    row("Atterrissage",d.heure);
+    row("Aéroport",d.aeroport||"");
     row("Personnes à accueillir",String(1+Number(d.nb_accompagnants||0)),"big");
     o.append(ul);
     o.append(el("p","hint","Un changement de vol ou d'horaire ? Remplissez à nouveau ce formulaire avec la même adresse e-mail : la dernière réponse fait foi."));
