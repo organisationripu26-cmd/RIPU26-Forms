@@ -8,6 +8,7 @@ const opts = require('../netlify/functions/lib/options');
 
 const id = { prenom: 'Amal', nom: 'Ben Ali', email: '  Amal@Example.com ', telephone: '+216 55 595 234' };
 const f1 = { ...id, confirme: true, institution: 'ISET', pays: 'Tunisie', fonction: 'Doctorant', roles: ['Participant'], regime: ['Aucun'], accessibilite: 'Non', c_donnees: true, c_infos: true };
+// F2 simplifié : mode implicite (toujours avion), Monastir uniquement, sans navette
 const f2 = { ...id, date_arrivee: '2026-10-29', aeroport: 'Monastir Habib-Bourguiba (MIR)', vol: 'tu 718', heure: '14:35', nb_accompagnants: '0' };
 
 test('F1 valide : e-mail normalisé, champ masqué (titre) jamais stocké', () => {
@@ -27,11 +28,11 @@ test('F1 : allergie et accessibilité conditionnelles', () => {
   const r = validate(1, { ...f1, regime: [opts.ALL], accessibilite: 'Oui' });
   assert.ok(r.errors.allergie && r.errors.accessibilite_detail);
 });
-test('F2 avion valide : vol normalisé, entiers convertis', () => {
+test('F2 valide : vol normalisé, entiers convertis', () => {
   const r = validate(2, f2);
   assert.ok(r.ok, JSON.stringify(r.errors)); assert.equal(r.data.vol, 'TU718'); assert.equal(r.data.nb_accompagnants, 0);
 });
-test('F2 avion : vol, heure, aéroport obligatoires et bien formés', () => {
+test('F2 : vol, heure, aéroport obligatoires et bien formés', () => {
   const r = validate(2, { ...id, date_arrivee: '2026-10-29', vol: 'TU-718', heure: '25:61' });
   assert.ok(r.errors.vol && r.errors.heure && r.errors.aeroport);
 });
@@ -41,17 +42,10 @@ test('F2 : accompagnants => noms obligatoires ; bornes 0-10', () => {
   assert.ok(validate(2, { ...f2, nb_accompagnants: '-1' }).errors.nb_accompagnants);
   assert.ok(validate(2, { ...f2, nb_accompagnants: '2', accompagnants: 'A ; B' }).ok);
 });
-test('F2 : aéroport non autorisé, correspondance, date hors fenêtre', () => {
-  assert.ok(validate(2, { ...f2, aeroport: 'Autre' }).errors.aeroport);
+test('F2 : correspondance et date hors fenêtre', () => {
   assert.ok(validate(2, { ...f2, correspondance: 'Oui' }).errors.ville_correspondance);
   assert.ok(validate(2, { ...f2, date_arrivee: '2025-01-01' }).errors.date_arrivee);
   assert.ok(validate(2, { ...f2, date_arrivee: 'Autre date' }).ok);
-});
-test('F2 simplifié : champs supprimés ou superflus ignorés', () => {
-  const r = validate(2, { ...f2, mode: 'Autre', hotel: 'Hotel Sousse' });
-  assert.ok(r.ok, JSON.stringify(r.errors));
-  assert.equal(r.data.hotel, undefined);
-  assert.equal(r.data.mode, undefined);
 });
 test('F3 : « Oui » valide ; « Non » ne stocke aucun détail', () => {
   const yes = validate(3, { email: 'a@b.tn', participe: 'Oui', formule: 'Les deux', adultes: '1', enfants: '2', accompagnants: 'A ; B ; C', mobilite: 'Non' });

@@ -2,7 +2,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-process.env.GS_URL_FORM3 = 'https://script.google.com/macros/s/gas3/exec';
+process.env.SUPABASE_URL = 'https://example.supabase.co';
+process.env.SUPABASE_SERVICE_KEY = 'service-secret';
 const { handler } = require('../netlify/functions/submit');
 
 const call = (body, over = {}) => handler({
@@ -14,17 +15,19 @@ const good = { form: 3, key: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', hp: '',
 
 test('succès : transmet des données validées avec la clé secrète, jamais renvoyée au client', async () => {
   let seen;
-  global.fetch = async (url, init) => { seen = { url, init }; return { ok: true, text: async () => JSON.stringify({ ok: true, total: 2, updated: false }) }; };
+  global.fetch = async (url, init) => { seen = { url, init }; return { ok: true, json: async () => ({ ok: true, total: 2, updated: false }) }; };
   const r = await call(good, { ip: '10.0.0.1' });
   assert.equal(r.statusCode, 200);
   const b = JSON.parse(r.body);
   assert.deepEqual([b.ok, b.total], [true, 2]);
-  assert.equal(seen.url, 'https://script.google.com/macros/s/gas3/exec');
-  assert.equal(JSON.parse(seen.init.body).data.adultes, 1);
+  assert.match(seen.url, /\/rest\/v1\/rpc\/submit_form$/);
+  assert.equal(seen.init.headers.apikey, 'service-secret');
+  assert.equal(r.body.includes('service-secret'), false);
+  assert.equal(JSON.parse(seen.init.body).p_data.adultes, 1);
 });
 
 test('validation : 400 avec erreurs par champ, la base n\'est pas appelée', async () => {
-  let called = false; global.fetch = async () => { called = true; return { ok: true, text: async () => '{}' }; };
+  let called = false; global.fetch = async () => { called = true; return { ok: true, json: async () => ({}) }; };
   const r = await call({ ...good, data: { email: 'x', participe: 'Oui' } }, { ip: '10.0.0.2' });
   assert.equal(r.statusCode, 400);
   assert.ok(JSON.parse(r.body).errors.email);
@@ -32,7 +35,7 @@ test('validation : 400 avec erreurs par champ, la base n\'est pas appelée', asy
 });
 
 test('honeypot : répond ok sans rien enregistrer', async () => {
-  let called = false; global.fetch = async () => { called = true; return { ok: true, text: async () => '{}' }; };
+  let called = false; global.fetch = async () => { called = true; return { ok: true, json: async () => ({}) }; };
   const r = await call({ ...good, hp: 'http://spam' }, { ip: '10.0.0.3' });
   assert.equal(r.statusCode, 200); assert.equal(called, false);
 });
@@ -45,7 +48,7 @@ test('méthode, JSON invalide, corps trop gros, formulaire inconnu', async () =>
 });
 
 test('panne base : 502 sans fuite d\'information', async () => {
-  global.fetch = async () => ({ ok: false, status: 500, text: async () => 'secret detail' });
+  global.fetch = async () => ({ ok: false, status: 500, json: async () => ({ message: 'secret detail' }) });
   const r = await call(good, { ip: '10.0.0.7' });
   assert.equal(r.statusCode, 502);
   assert.equal(r.body.includes('secret'), false);
@@ -59,7 +62,7 @@ test('origine non autorisée refusée quand ALLOWED_ORIGIN est défini', async (
 });
 
 test('limiteur : 429 après trop de tentatives depuis la même IP', async () => {
-  global.fetch = async () => ({ ok: true, text: async () => JSON.stringify({ ok: true }) });
+  global.fetch = async () => ({ ok: true, json: async () => ({ ok: true }) });
   let last;
   for (let i = 0; i < 32; i++) last = await call(good, { ip: '10.9.9.9' });
   assert.equal(last.statusCode, 429);
