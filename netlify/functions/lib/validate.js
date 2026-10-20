@@ -13,7 +13,7 @@ const AUTRE_DATE = 'Autre date';
 
 const has = (d, k, v) => [].concat(d[k] || []).includes(v);
 const isAuthor = d => has(d, 'roles', o.AUT);
-const avion = d => d.mode === 'Avion';
+const avion = () => true; // Formulaire simplifié : toujours avion
 const party = d => 1 + (+d.adultes || 0) + (+d.enfants || 0);
 const joins = d => d.participe !== 'Non';
 
@@ -34,24 +34,21 @@ const SPEC = {
     c_donnees: { t: 'bool', r: 1, must: 1 }, c_infos: { t: 'bool', r: 1, must: 1 }, c_photo: { t: 'bool' }, c_liste: { t: 'bool' },
   },
   2: {
+    // Formulaire simplifié : Monastir uniquement, toujours en avion
     email: { t: 'email', r: 1 }, prenom: { t: 'text', r: 1, max: 80 }, nom: { t: 'text', r: 1, max: 80 },
     telephone: { t: 'phone', r: 1 },
-    mode: { t: 'enum', r: 1, o: o.MODE },
     date_arrivee: { t: 'day', r: 1 },
-    aeroport: { t: 'enum', r: 1, o: o.AEROPORT, if: avion },
-    aeroport_autre: { t: 'text', r: 1, max: 100, if: d => avion(d) && d.aeroport === 'Autre' },
-    compagnie: { t: 'text', max: 80, if: avion },
-    vol: { t: 'flight', r: 1, if: avion },
-    heure: { t: 'time', r: 1, if: avion },
-    ville_depart: { t: 'text', max: 80, if: avion },
-    correspondance: { t: 'enum', o: o.YN, if: avion },
-    ville_correspondance: { t: 'text', r: 1, max: 80, if: d => avion(d) && d.correspondance === 'Oui' },
+    aeroport: { t: 'enum', r: 1, o: o.AEROPORT },
+    compagnie: { t: 'text', max: 80 },
+    vol: { t: 'flight', r: 1 },
+    heure: { t: 'time', r: 1 },
+    ville_depart: { t: 'text', max: 80 },
+    correspondance: { t: 'enum', o: o.YN },
+    ville_correspondance: { t: 'text', r: 1, max: 80, if: d => d.correspondance === 'Oui' },
     nb_accompagnants: { t: 'int', r: 1, min: 0, max: 10 },
     accompagnants: { t: 'text', r: 1, max: 600, if: d => (+d.nb_accompagnants || 0) > 0 },
     besoins: { t: 'multi', o: o.BESOINS },
     besoins_detail: { t: 'text', r: 1, max: 500, if: d => has(d, 'besoins', 'Autre') },
-    navette: { t: 'enum', r: 1, o: o.NAVETTE, if: avion },
-    hotel: { t: 'text', max: 120 }, depart: { t: 'enum', o: o.DEPART }, message: { t: 'text', max: 600 },
   },
   3: {
     email: { t: 'email', r: 1 }, prenom: { t: 'text', max: 80 }, nom: { t: 'text', max: 80 }, telephone: { t: 'phone' },

@@ -15,7 +15,7 @@ module.exports = {
   REGIME: ['Aucun', 'Végétarien', 'Sans porc', 'Sans gluten', 'Sans lactose', ALL],
   OPEN_BADGE: ['Les deux', 'Open Badge seulement', 'Attestation seulement', 'Non merci'],
   MODE: ['Avion', 'Autre'],
-  AEROPORT: ['Monastir Habib-Bourguiba (MIR)', 'Enfidha-Hammamet (NBE)', 'Tunis-Carthage (TUN)', 'Autre'],
+  AEROPORT: ['Monastir Habib-Bourguiba (MIR)'],
   NAVETTE: ['Oui', 'Non', 'Je ne sais pas encore'],
   BESOINS: ['Mobilité réduite', 'Siège enfant', 'Bagages volumineux', 'Autre'],
   DEPART: ['Samedi 31 octobre', 'Dimanche 1er novembre', 'Lundi 2 novembre', 'Plus tard', 'Je ne sais pas'],
